@@ -10,7 +10,7 @@
       placeholder="First Name"
       required=""
       :value="firstName"
-      @input="$emit('update:firstName', $event.target.value)" />
+      @input="updateFirstName($event)" />
 </BaseFormInput>
 <BaseFormInput
     class="full-name"
@@ -23,7 +23,7 @@
       placeholder="Last Name"
       required=""
       :value="lastName"
-      @input="$emit('update:lastName', $event.target.value)" />
+      @input="updateLastName($event)" />
 </BaseFormInput>
 </template>
 
@@ -38,6 +38,14 @@ export default {
   props: {
     firstName: String,
     lastName: String,
+  },
+  methods: {
+    updateFirstName($e) {
+      this.$emit('update:firstName', $e.target.value);
+    },
+    updateLastName($e) {
+      this.$emit('update:lastName', $e.target.value);
+    },
   },
 };
 </script>

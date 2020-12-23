@@ -62,7 +62,25 @@ export default {
       errors: [],
       emailReg: /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
       dateReg: /^\d{4}[/-]\d{2}[/-]\d{2}$/,
-
+      validateData: [{
+        property: 'nameIsValid',
+        errorMessage: 'Please input valid first and last names.',
+      }, {
+        property: 'birthdayIsValid',
+        errorMessage: 'Please enter a valid date for birthday in the format MM-DD-YYYY.',
+      }, {
+        property: 'emailIsValid',
+        errorMessage: 'Please enter a valid email.',
+      }, {
+        property: 'shirtSizeIsValid',
+        errorMessage: 'Please choose a shirt size from the list.',
+      }, {
+        property: 'attendeeTypeIsValid',
+        errorMessage: 'Please choose a attendee type from the list.',
+      }, {
+        property: 'mailingListIsValid',
+        errorMessage: 'Please select one of the mailing list options.',
+      }],
     };
   },
   computed: {
@@ -105,55 +123,31 @@ export default {
         label: 'Both',
       }];
     },
+    nameIsValid() {
+      return this.firstName && this.lastName;
+    },
+    birthdayIsValid() {
+      return this.dateReg.test(this.birthday);
+    },
+    emailIsValid() {
+      return this.emailReg.test(this.email);
+    },
+    shirtSizeIsValid() {
+      return this.shirtSizes.some((size) => size.value === this.shirtSize);
+    },
+    attendeeTypeIsValid() {
+      return this.attendeeTypes.some((type) => type.id === this.attendeeType);
+    },
+    mailingListIsValid() {
+      const mailingListOptions = ['yes', 'no'];
+      return mailingListOptions.some((option) => option === this.mailingList);
+    },
   },
   methods: {
-    checkEmail() {
-      if (this.email == null || this.email === '') {
-        this.errors.push('Please Enter Email');
-      } else if (!this.emailReg.test(this.email)) {
-        this.errors.push('Please enter a valid email');
-      }
-    },
-    checkBirthday() {
-      if (this.birthday == null || this.birthday === '') {
-        this.errors.push('Please Enter Birthday');
-      } else if (!this.dateReg.test(this.birthday)) {
-        this.errors.push('Please enter a valid date for birthday in the format MM-DD-YYYY');
-      }
-    },
-    checkName() {
-      if (!this.firstName) {
-        this.errors.push('First name is required.');
-      }
-      if (!this.lastName) {
-        this.errors.push('Last name is required.');
-      }
-    },
-    checkShirtSize() {
-      if (!this.shirtSizes.some((size) => size.value === this.shirtSize)) {
-        this.errors.push('Please choose a shirt size from the list.');
-      }
-    },
-    checkAttendeeType() {
-      if (!this.attendeeTypes.some((type) => type.id === this.attendeeType)) {
-        this.errors.push('Please choose a attendee type from the list.');
-      }
-    },
-    checkMailingList() {
-      this.mailingList = 'shit';
-      const mailingListOptions = ['yes', 'no'];
-      if (!mailingListOptions.some((option) => option === this.mailingList)) {
-        this.errors.push("Please don't submit bullshit.");
-      }
-    },
     checkRegistration() {
       this.errors = [];
-      this.checkName();
-      this.checkBirthday();
-      this.checkEmail();
-      this.checkShirtSize();
-      this.checkAttendeeType();
-      this.checkMailingList();
+      this.validateData.forEach((check) => this[check.property]
+          || this.errors.push(check.errorMessage));
       return this.errors.length === 0;
     },
     createRegistration() {
